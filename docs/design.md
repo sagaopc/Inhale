@@ -2003,3 +2003,22 @@ Radeon 780M (AMD 26.11.2) the fixed build differs by at most 9.
 
 Why the headless runs after the sync did not see it: they counted the fence stalls in the log and nobody looked at the
 shots. `.claude/skills/verify` now makes the shots of each run part of the check.
+
+### 2026-11-23: build a6ce40dc taken, not yet played
+
+A player's `.nup` of the same program (its file named "Kirby and the Forgotten Land + Star-Crossed Worlds [01004D300...]")
+was refused by the check: `This is build a6ce40dc. Inhale supports build 395fc326.` Its full build id and version number are
+not known here yet.
+
+- What was tied to the build: the check (`check_supported_build`, `check`'s `@@check` line, `exefs_problem` for a kept
+  exefs), the far-objects edit (`nx2/kirby_far.py`) and the shader list (`nx2/kirby_shaders.py`). The two last check main's
+  build id and each site's word themselves, and leave another build out with a line in the log. Nothing else in the tree
+  reads a guest address of this build: `host/kirby_hle.c` hooks SDK names, and `host/kirby_res.c` and `host/kirby_shadow.c`
+  check the data's bytes before they change them. No hot list or play profile of the game ships (`assets/` holds the
+  pipeline lists only, keyed by shader hash).
+- Change: `OTHER_BUILDS` in `nx2/make_game.py` (`supported_build`) lists `a6ce40dc`. The check says it is taken and not yet
+  played, and what is left out. `BUILD_ID` and the manifest's `nup_build_id` stay `395fc326`
+  (`tests/test_recomplauncher_inhale.py`): RecompLauncher still takes only that build. Test:
+  `tests/test_make_game_other_builds.py`.
+- Not checked: a build of `a6ce40dc` and play. The far objects can update at 30 or 15 and a first visit can stutter there
+  until the two lists are made for its addresses.

@@ -27,6 +27,7 @@ v0.4.0 drew the scene black in play, on every graphics card (issues #18 and #19)
 |---|---|
 | Opening, title screen, the first world's stages and its boss, several special stages | ✅ Played through, at 60 fps |
 | Later worlds | ❓ Not played yet |
+| Build `a6ce40dc` of the game | ❓ Taken by the builder, not yet played (see [What you need](#what-you-need)) |
 | Star-Crossed World stages (the Switch 2 Edition's) | ⚠️ The first one played. Up to v0.2.0 its crystal covering vanished for single frames in a jump or a camera turn. Fixed in v0.3.0 |
 | Sound, music, movies, keyboard and saves | ✅ Work |
 | Controllers | ❓ Few reports yet. Rumble is played since v0.2.0, not yet felt on a pad in play. Local co-op with one controller per player: new in v0.4.1, not yet tried with two controllers |
@@ -127,7 +128,10 @@ virtual surround or a driver that drops the centre still plays what is on it. Se
 
 **Your copy of the game:** *Kirby and the Forgotten Land, Nintendo Switch 2 Edition + Star-Crossed World*, as one
 `.nup` file, or as the extracted folders: `exefs/` (program `04004d300c5ae001`, v65536) and `aoc/<title id>/romfs/`
-(the data, `01004d300c5af001`). The builder checks the version; other versions are not supported.
+(the data, `01004d300c5af001`). The builder checks the version: it is made for build `395fc326` (the
+build id of `main`). Build `a6ce40dc`, another release of the same program, is taken too but has not been played yet:
+the far-scenery fix and the shader list are made for `395fc326` and are left out for it, so far objects can move at 30
+or 15 fps and a first visit can stutter. Other versions are not supported.
 
 | Component | What you need |
 |---|---|

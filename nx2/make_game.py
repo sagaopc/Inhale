@@ -56,6 +56,18 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 PY = [sys.executable, "-I", "-u", "-X", "utf8"]   # (utf8: every step's output in UTF-8 whatever the console's code page: another one cannot print every letter)   # (-u: the steps' output as it comes, not in 8 KB blocks minutes apart)
 BUILD_ID = "395fc326"   # (the version this port is made for, and a hot list and profiles under work/ were made from)
+# (inhale) Other builds of the same program the builder takes too, not yet played. Their code is lifted as BUILD_ID's is; what
+# is tied to BUILD_ID's addresses (kirby_far.py's far objects, kirby_shaders.py's shader list) checks the build itself and
+# leaves them out, so far scenery can update at 30 or 15 and a first visit can stutter. a6ce40dc: another release of the
+# Switch 2 Edition's program, reported by a player whose package the builder refused
+OTHER_BUILDS = ("a6ce40dc",)
+
+
+def supported_build(bid):
+    """bid, main's build id in hex, is BUILD_ID's or one of OTHER_BUILDS'"""
+    return any(bid.lower().startswith(b) for b in (BUILD_ID,) + OTHER_BUILDS)
+
+
 STARTED = time.time()   # (the build's total time, kept in build_times.json and said as @@times)
 sys.path[:0] = [HERE, os.path.join(ROOT, "third_party", "a64-kit", "tools")]   # (python -I leaves the script folder off)
 import long_paths  # noqa: E402
@@ -507,7 +519,7 @@ def check_modules(exefs):
 
 def check_supported_build(exefs):
     bid = build_id(os.path.join(exefs, "main"))
-    if not bid.startswith(BUILD_ID):
+    if not supported_build(bid):
         fail("This is build %s. Inhale supports build %s." % (bid[:8], BUILD_ID))
 
 
@@ -588,7 +600,7 @@ def exefs_problem(exefs):
                 head = f.read(0x60)
             if head[:4] != b"NSO0":
                 return "%s is not a game module" % name
-            if name == "main" and not head[0x40:0x60].hex().startswith(BUILD_ID):
+            if name == "main" and not supported_build(head[0x40:0x60].hex()):
                 return "another build of the game"
     except OSError as e:
         return "it could not be read: %s" % (e.strerror or e)
@@ -806,6 +818,9 @@ def check(a, work):
         bid = build_id(os.path.join(a.exefs, "main"))
     if bid.startswith(BUILD_ID):
         say("check", "ok", "This is the version Inhale supports (build %s)." % bid[:8])
+    elif supported_build(bid):
+        say("check", "ok", "This is build %s: Inhale builds it, but it has not been played yet. Two things made for build %s "
+            "are left out: far scenery at the full frame rate, and the shader list (a first visit can stutter)." % (bid[:8], BUILD_ID))
     else:
         say("check", "bad", "This is build %s. Inhale supports build %s." % (bid[:8], BUILD_ID))
 
